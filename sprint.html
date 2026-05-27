@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The 7-Day GTM Architecture Sprint</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --grid-color: rgba(0, 0, 0, 0.03);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            
+            /* Phase Colors - Section Backgrounds */
+            --menu-bg: #f0f7ff;
+            --sequence-bg: #f9f5ff;
+            --guarantee-bg: rgba(52, 211, 153, 0.08);
+
+            /* Pillar Unique Accent Colors */
+            --pillar-strat: #f87171; /* Red */
+            --pillar-proc: #fbbf24;  /* Yellow */
+            --pillar-tech: #3b82f6;  /* Blue */
+            --pillar-data: #8b5cf6;  /* Purple */
+            --pillar-enable: #10b981; /* Green */
+
+            /* Gradients for Pillar Accents */
+            --strat-grad: linear-gradient(90deg, #f87171, #fca5a5);
+            --proc-grad: linear-gradient(90deg, #fbbf24, #fcd34d);
+            --tech-grad: linear-gradient(90deg, #3b82f6, #60a5fa);
+            --data-grad: linear-gradient(90deg, #8b5cf6, #a78bfa);
+            --enable-grad: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(var(--grid-color) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            margin: 0;
+            padding: 40px 40px;
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        /* Clean, Modern SaaS Hero Header Design */
+        .hero-header {
+            text-align: center;
+            margin-bottom: 70px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 64px 40px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--pillar-tech), var(--pillar-data), var(--pillar-enable));
+        }
+
+        .hero-header h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 18px;
+            margin-top: 0;
+            letter-spacing: -0.04em;
+        }
+
+        .hero-header h4 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 0 0 24px 0;
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 8px 24px;
+            border-radius: 30px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .hero-header p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        .meta-tags {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 36px;
+            flex-wrap: wrap;
+        }
+
+        .meta-tag {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-tag svg {
+            color: var(--pillar-tech);
+        }
+
+        .miro-board {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .frame {
+            border: 2px dashed;
+            border-radius: 16px;
+            padding: 50px 40px 30px 40px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            margin-bottom: 70px;
+        }
+
+        /* Center-aligned frame headers */
+        .frame::before {
+            content: attr(data-title);
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 10px 28px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border-radius: 30px;
+            box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.1);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-main);
+            white-space: nowrap;
+        }
+
+        /* Section Backgrounds */
+        .frame.menu-section { background-color: var(--menu-bg); border-color: rgba(96, 165, 250, 0.3); }
+        .frame.sequence-section { background-color: var(--sequence-bg); border-color: rgba(139, 92, 246, 0.3); }
+        .frame.guarantee-section { background-color: var(--guarantee-bg); border-color: rgba(52, 211, 153, 0.4); }
+
+        .category-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 30px 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .category-header:first-of-type {
+            margin-top: 10px;
+        }
+
+        .category-header::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, #e2e8f0, transparent);
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            flex: 1;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+            border: 1px solid #f1f5f9;
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.08);
+            border-color: #e2e8f0;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 16px 16px 0 0;
+            z-index: 1;
+        }
+
+        /* Pillar Specific Accent Classes */
+        .card.pillar-strat::after { background: var(--strat-grad); }
+        .card.pillar-proc::after { background: var(--proc-grad); }
+        .card.pillar-tech::after { background: var(--tech-grad); }
+        .card.pillar-data::after { background: var(--data-grad); }
+        .card.pillar-enable::after { background: var(--enable-grad); }
+
+        .card h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 svg {
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .card .tech-stack {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            display: block;
+        }
+        
+        .pillar-strat .tech-stack { color: var(--pillar-strat); }
+        .pillar-proc .tech-stack { color: var(--pillar-proc); }
+        .pillar-tech .tech-stack { color: var(--pillar-tech); }
+        .pillar-data .tech-stack { color: var(--pillar-data); }
+        .pillar-enable .tech-stack { color: var(--pillar-enable); }
+
+        .card p.description {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        /* NEW: Outcomes CSS */
+        .outcome-separator {
+            border: none;
+            border-top: 1px dashed #cbd5e1;
+            margin: 20px 0 16px 0;
+            width: 100%;
+        }
+
+        .outcome-text {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .outcome-text .label {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            margin-right: 6px;
+        }
+
+        .pillar-strat .outcome-text .label { color: var(--pillar-strat); }
+        .pillar-proc .outcome-text .label { color: var(--pillar-proc); }
+        .pillar-tech .outcome-text .label { color: var(--pillar-tech); }
+        .pillar-data .outcome-text .label { color: var(--pillar-data); }
+        .pillar-enable .outcome-text .label { color: var(--pillar-enable); }
+
+        .grid-layout {
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 20px;
+        }
+
+        .pillar-header {
+            padding-bottom: 14px;
+            border-bottom: 2px solid #f1f5f9;
+            margin-bottom: 14px !important;
+        }
+
+        /* TIMELINE CSS */
+        .timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        /* The continuous vertical line */
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--pillar-data), var(--pillar-tech), var(--pillar-enable));
+            top: 24px;
+            bottom: 24px;
+            left: 32px; 
+            transform: translateX(-50%);
+            border-radius: 2px;
+            z-index: 0;
+        }
+
+        .timeline-item {
+            padding: 0 0 40px 72px;
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        /* The timeline dots */
+        .timeline-dot {
+            position: absolute;
+            box-sizing: border-box;
+            width: 24px;
+            height: 24px;
+            left: 32px; 
+            transform: translateX(-50%);
+            top: 24px;
+            background-color: #fff;
+            border: 4px solid var(--pillar-data);
+            border-radius: 50%;
+            z-index: 1;
+            box-shadow: 0 0 0 6px var(--sequence-bg);
+        }
+
+        .item-2 .timeline-dot { border-color: var(--pillar-tech); }
+        .item-3 .timeline-dot { border-color: var(--pillar-proc); }
+        .item-4 .timeline-dot { border-color: var(--pillar-enable); }
+
+        .timeline-content {
+            background-color: white;
+            padding: 24px 32px;
+            border-radius: 16px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.06);
+            border-color: #e2e8f0;
+        }
+
+        .timeline-content h3 {
+            margin: 0 0 6px 0;
+            font-size: 1.2rem;
+            color: var(--text-main);
+        }
+
+        .timeline-content .tech-stack {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--pillar-data);
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .item-2 .tech-stack { color: var(--pillar-tech); }
+        .item-3 .tech-stack { color: var(--pillar-proc); }
+        .item-4 .tech-stack { color: var(--pillar-enable); }
+
+        .timeline-content p {
+            margin: 0;
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Guarantee & Security Section CSS */
+        .guarantee-content {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .guarantee-content svg {
+            color: var(--pillar-enable);
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+        }
+
+        .security-content {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .security-content svg {
+            color: var(--text-muted);
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 40px;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .cta-section h3 {
+            font-size: 1.5rem;
+            margin: 0 0 16px 0;
+        }
+
+        .cta-section p {
+            color: var(--text-muted);
+            margin: 0 0 24px 0;
+        }
+
+        @media (max-width: 768px) {
+            .guarantee-content, .security-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero-header {
+                padding: 40px 24px;
+                margin-bottom: 50px;
+            }
+            .frame {
+                margin-bottom: 50px;
+            }
+            .hero-header h2 {
+                font-size: 2.2rem;
+            }
+            .timeline-item {
+                padding-left: 56px;
+            }
+            .timeline::after, 
+            .timeline-dot {
+                left: 24px; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="miro-board">
+
+        <div class="hero-header">
+            <h2>The 7-Day GTM Architecture Sprint</h2>
+            <h4>Engineered by: Keshav Raj &nbsp;|&nbsp; Stack Specialization: HubSpot + Clay + n8n</h4>
+            <p>When a GTM engine is scaling, full-time hiring cycles take months, but data degradation and broken handoffs happen daily. This 7-day execution sprint is a fixed-scope, zero-overhead technical intervention designed to isolate and eliminate your deepest system bottlenecks.</p>
+            
+            <div class="meta-tags">
+                <div class="meta-tag">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Investment: $1,500 (Flat Fee)
+                </div>
+                <div class="meta-tag">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Timeline: 7 Calendar Days
+                </div>
+                <div class="meta-tag">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    Commitment: Zero long-term retainer
+                </div>
+            </div>
+        </div>
+
+        <div class="frame menu-section" data-title="🛠️ The Menu: Select Any 3 Workflows">
+            <p style="margin-top: 0; color: var(--text-muted); margin-bottom: 10px;">Choose the three highest-priority data pipelines or automations you need deployed right now.</p>
+            
+            <h3 class="category-header">Foundation Sprints</h3>
+            <div class="grid-layout">
+                
+                <div class="card pillar-tech">
+                    <h3 class="pillar-header">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                        1. Automated Enrichment Engine
+                    </h3>
+                    <span class="tech-stack">Clay + HubSpot</span>
+                    <p class="description">Scrapes and enriches incoming leads via cascading data sources (LinkedIn, GitHub, Apollo). Automatically maps data to custom HubSpot properties with zero manual research.</p>
+                    <hr class="outcome-separator">
+                    <p class="outcome-text"><span class="label">Outcome:</span> Reps save 5+ hours a week <br>on manual research; speed-to-lead drops to zero.</p>
+                </div>
+
+                <div class="card pillar-enable">
+                    <h3 class="pillar-header">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        2. Smart Routing & Alerts
+                    </h3>
+                    <span class="tech-stack">n8n + HubSpot + Slack</span>
+                    <p class="description">Intelligently routes leads to specific reps based on territory or company size. Triggers real-time Slack notifications with contextual lead data when a high-intent account takes action.</p>
+                    <hr class="outcome-separator">
+                    <p class="outcome-text"><span class="label">Outcome:</span> Decreases lead decay; prospects are engaged within 5 minutes of high-intent actions.</p>
+                </div>
+
+                <div class="card pillar-strat">
+                    <h3 class="pillar-header">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                        3. Lifecycle & Attribution Reset
+                    </h3>
+                    <span class="tech-stack">HubSpot Architecture</span>
+                    <p class="description">Audits, restructures, and locks down your Lifecycle Stages and Lead Status. Ensures flawless cross-functional transitions from Marketing MQL to Sales SQL.</p>
+                    <hr class="outcome-separator">
+                    <p class="outcome-text"><span class="label">Outcome:</span> Guarantees 100% accurate conversion rate tracking from Marketing to closed-won.</p>
+                </div>
+
+                <div class="card pillar-proc">
+                    <h3 class="pillar-header">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        4. Outbound Signal Pipeline
+                    </h3>
+                    <span class="tech-stack">Clay + n8n + HubSpot</span>
+                    <p class="description">Monitors dynamic intent triggers (e.g., job openings, recent funding) and automatically pushes qualified prospects straight into HubSpot active sequences.</p>
+                    <hr class="outcome-separator">
+                    <p class="outcome-text"><span class="label">Outcome:</span> Replaces cold outreach with warm, timing-based engagement, boosting reply rates by up to 3x.</p>
+                </div>
+
+                <div class="card pillar-data">
+                    <h3 class="pillar-header">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                        5. AI Post-Call Data Sync
+                    </h3>
+                    <span class="tech-stack">n8n + OpenAI + HubSpot</span>
+                    <p class="description">Extracts raw call data from your recording platform, structures action items using AI, and instantly updates HubSpot deal notes and tasks without manual entry.</p>
+                    <hr class="outcome-separator">
+                    <p class="outcome-text"><span class="label">Outcome:</span> Eliminates administrative CRM work, giving reps 20% more time for active selling.</p>
+                </div>
+            </div>
+
+            <h3 class="category-header" style="margin-top: 40px;">Architecture Sprints</h3>
+            <div class="grid-layout">
+                
+                <div class="card pillar-data">
+                    <h3 class="pillar-header">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        6. Automated ARR & Billing Sync
+                    </h3>
+                    <span class="tech-stack">n8n + Stripe/ERP + HubSpot</span>
+                    <p class="description">Creates a bi-directional data flow uniting billing ledgers with CRM company records. Automates ARR roll-ups, proration updates, and renewal pipeline generation.</p>
+                    <hr class="outcome-separator">
+                    <p class="outcome-text"><span class="label">Outcome:</span> Prevents revenue leakage and ensures board-level reporting matches cash collected.</p>
+                </div>
+
+                <div class="card pillar-proc">
+                    <h3 class="pillar-header">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        7. Dynamic Lead & SLA Routing
+                    </h3>
+                    <span class="tech-stack">n8n + HubSpot + Slack</span>
+                    <p class="description">Advanced round-robin logic incorporating real-time rep capacity, OOO syncing, weighted territories, and auto-reassignment if SLA follow-up breaches occur.</p>
+                    <hr class="outcome-separator">
+                    <p class="outcome-text"><span class="label">Outcome:</span> Ensures zero leads slip through <br>the cracks, maximizing inbound marketing <br>ROI.</p>
+                </div>
+
+                <div class="card pillar-strat">
+                    <h3 class="pillar-header">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        8. Predictive Churn Triggers
+                    </h3>
+                    <span class="tech-stack">Clay + n8n + HubSpot</span>
+                    <p class="description">Aggregates product usage telemetry and external signals to calculate real-time customer health scores, automatically generating tasks for CS when accounts drop into high-risk tiers.</p>
+                    <hr class="outcome-separator">
+                    <p class="outcome-text"><span class="label">Outcome:</span> CS intercepts churn 30 days before renewal, measurably lifting Net Retention Rate (NRR).</p>
+                </div>
+
+                <div class="card pillar-enable">
+                    <h3 class="pillar-header">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        9. Automated Deal Desk logic
+                    </h3>
+                    <span class="tech-stack">HubSpot + n8n + Slack</span>
+                    <p class="description">Custom CPQ-lite workflows that flag high-discount or non-standard contract terms, routing them through Slack for seamless executive approval before unlocking the quote.</p>
+                    <hr class="outcome-separator">
+                    <p class="outcome-text"><span class="label">Outcome:</span> Accelerates sales cycles while protecting gross margins from unauthorized discounting.</p>
+                </div>
+
+                <div class="card pillar-tech">
+                    <h3 class="pillar-header">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                        10. Cross-Object Hierarchy Build
+                    </h3>
+                    <span class="tech-stack">n8n + HubSpot Data Sync</span>
+                    <p class="description">Complex bi-directional normalization of parent-child company hierarchies. Rolls up deal values, activity counts, and contacts from subsidiaries to the master Enterprise account.</p>
+                    <hr class="outcome-separator">
+                    <p class="outcome-text"><span class="label">Outcome:</span> Unlocks clear visibility into Enterprise total account value and cross-sell white space.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="frame sequence-section" data-title="⚡ The 7-Day Delivery Sequence">
+            <p style="margin-top: 0; color: var(--text-muted); margin-bottom: 40px; text-align: center; max-width: 700px; margin-left: auto; margin-right: auto;">We bypass standard enterprise onboarding and discovery cycles. We follow a strict execution cadence to deliver functional infrastructure in 7 days.</p>
+            
+            <div class="timeline">
+                
+                <div class="timeline-item item-1">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Day 1: Technical Scoping & Access</h3>
+                        <span class="tech-stack">Infrastructure Setup</span>
+                        <p>Secure, restricted API access mapping via HubSpot, Clay, and n8n. Alignment call to confirm your 3 chosen menu items and precise data validation rules.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item item-2">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Days 2 - 4: Core Infrastructure Build</h3>
+                        <span class="tech-stack">Asynchronous Development</span>
+                        <p>Sandbox development of your selected webhooks, n8n routing paths, and Clay waterfall logic. We build silently with zero interruption to your live production data.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item item-3">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Day 5: Production QA & Stress Testing</h3>
+                        <span class="tech-stack">Data Integrity Verification</span>
+                        <p>Rigorous edge-case testing to ensure zero data loops, strict formatting compliance, and flawless multi-source attribution inside HubSpot's architecture.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item item-4">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Days 6 - 7: Complete Deployment & Handoff</h3>
+                        <span class="tech-stack">Live Execution</span>
+                        <p>Pushing pipelines live to production. Delivery of a custom Loom documentation video detailing the exact data flow for your internal team's long-term ownership.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="frame guarantee-section" data-title="🔒 Guarantee & Security">
+            <div class="guarantee-content" style="margin-bottom: 32px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; color: var(--text-main);">Zero-Risk Execution Guarantee</h3>
+                    <p style="margin: 0; color: var(--text-muted); line-height: 1.6; font-size: 1.05rem;">We begin technical configuration on Day 1. If by Day 3 (48 hours into the build) you do not see the exact infrastructural clarity and velocity promised, we kill the project immediately. <strong>You pay absolutely nothing, zero strings attached.</strong></p>
+                </div>
+            </div>
+            
+            <hr style="border:0; border-top: 1px solid rgba(16, 185, 129, 0.2); margin: 0 0 32px 0;">
+            
+            <div class="security-content">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; color: var(--text-main);">Enterprise-Grade Security & Compliance</h3>
+                    <p style="margin: 0; color: var(--text-muted); line-height: 1.6; font-size: 1.05rem;">We operate exclusively via restricted OAuth API scopes, build all routing logic in sandbox environments first, and maintain a strict <strong>zero-data-retention policy</strong>. Your proprietary data and PII never leave your tech stack.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h3>Ready to unblock your GTM stack next week?</h3>
+            <p>Reply to our conversation with the <strong>numbers of the 3 workflows</strong> you want built from the menu above, and I will send over a secure 1-page digital agreement to lock in your sprint slot.</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
