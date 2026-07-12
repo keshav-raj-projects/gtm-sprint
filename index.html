@@ -1,780 +1,1057 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The 7-Day GTM Architecture Sprint</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #ffffff;
-            --grid-color: rgba(0, 0, 0, 0.03);
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            
-            /* Unified Cohesive Palette */
-            --color-primary: #4f46e5;  /* Deep Indigo for Tech/Data/Structure */
-            --color-accent: #10b981;   /* Emerald Green strictly for Outcomes/Guarantees */
-            --primary-grad: linear-gradient(90deg, #4f46e5, #818cf8);
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keshav Raj | GTM Engineer & Revenue Architect</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg-main: #ffffff;
+        --bg-secondary: #f8fafc;
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --accent: #2563eb;
+        --border-light: #e2e8f0;
+        --green-primary: #16a34a;
+        --green-light: #dcfce7;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-primary);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+    }
 
-            /* Phase Colors - Section Backgrounds */
-            --menu-bg: #f8fafc;        /* Slate-50 for neutral grounding */
-            --sequence-bg: #f1f5f9;    /* Slate-100 for subtle progression */
-            --guarantee-bg: rgba(16, 185, 129, 0.08); /* Emerald tint */
-        }
+    /* NAVIGATION */
+    .nav-bar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-light);
+        padding: 16px 0;
+    }
+    .nav-container {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 5%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .nav-logo {
+        font-weight: 800;
+        font-size: 1.25rem;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        text-decoration: none;
+    }
+    .nav-links {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+    }
+    .nav-link {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--text-primary); }
+    .nav-cta {
+        background: var(--text-primary);
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: background-color 0.2s;
+    }
+    .nav-cta:hover { background: var(--accent); }
 
-        /* Essential Reset for Mobile Optimization */
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+    
+    section { padding: 100px 0; border-bottom: 1px solid var(--border-light); }
+    section:last-child { border-bottom: none; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(var(--grid-color) 1.5px, transparent 1.5px);
-            background-size: 24px 24px;
-            margin: 0;
-            padding: 40px 40px;
-            color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden; /* Prevents horizontal scroll on mobile */
-        }
+    h1 { font-size: 4rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px; color: var(--text-primary); }
+    h2 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; color: var(--text-primary); }
+    h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
+    p { font-size: 1.125rem; color: var(--text-secondary); margin-bottom: 24px; }
+    
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); font-weight: 700; display: block; margin-bottom: 16px; }
 
-        /* Clean, Modern SaaS Hero Header Design */
-        .hero-header {
-            text-align: center;
-            margin-bottom: 70px;
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 64px 40px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-        }
+    /* HERO SECTION */
+    .hero { 
+        position: relative;
+        padding-top: 100px; 
+        padding-bottom: 80px; 
+        background-color: var(--bg-main);
+        background-image: 
+            linear-gradient(to right, rgba(0,0,0,0.015) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0,0,0,0.015) 1px, transparent 1px);
+        background-size: 48px 48px;
+        overflow: hidden;
+    }
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -20%;
+        right: -10%;
+        width: 60%;
+        height: 80%;
+        background: radial-gradient(circle, rgba(22, 163, 74, 0.08) 0%, rgba(255,255,255,0) 70%);
+        z-index: 0;
+    }
+    .hero-container { 
+        max-width: 1440px; 
+        margin: 0 auto; 
+        padding: 0 5%; 
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr; 
+        gap: 64px;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: #fff;
+        border: 1px solid var(--border-light);
+        padding: 6px 16px 6px 6px;
+        border-radius: 40px;
+        margin-bottom: 32px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .hero-eyebrow img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+    .hero-eyebrow span { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-primary); }
+    
+    .hero-headline {
+        font-size: 4.5rem;
+        line-height: 1.05;
+        margin-bottom: 24px;
+    }
+    .text-highlight {
+        position: relative;
+        display: inline-block;
+        z-index: 1;
+    }
+    .text-highlight::after {
+        content: '';
+        position: absolute;
+        bottom: 8px;
+        left: 0;
+        width: 100%;
+        height: 16px;
+        background-color: var(--green-light);
+        z-index: -1;
+    }
+    .hero-desc {
+        font-size: 1.15rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        line-height: 1.7;
+        margin-bottom: 40px;
+    }
+    .hero-desc strong {
+        color: var(--text-primary);
+    }
+    
+    .btn-green {
+        background-color: var(--green-primary);
+        color: #fff;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 18px 24px;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.2s, transform 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    .btn-green:hover { background-color: #15803d; transform: translateY(-2px); }
 
-        .hero-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: var(--primary-grad);
-        }
+    /* TRUST BAR */
+    .trust-bar { 
+        grid-column: 1 / -1; 
+        margin-top: 48px; 
+        padding-top: 48px; 
+        border-top: 1px solid var(--border-light); 
+        width: 100%; 
+        text-align: left;
+    }
+    .trust-bar p { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); font-weight: 700; margin-bottom: 24px; }
+    .trust-logos { display: flex; justify-content: flex-start; align-items: center; gap: 48px; flex-wrap: wrap; padding-bottom: 8px; }
+    .trust-logos img { height: 32px; width: auto; filter: grayscale(100%); opacity: 0.6; transition: filter 0.3s, opacity 0.3s; }
+    .trust-logos img:hover { filter: grayscale(0%); opacity: 1; }
 
-        .hero-header h2 {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 18px;
-            margin-top: 0;
-            letter-spacing: -0.04em;
-        }
+    /* TERMINAL UI */
+    .terminal-wrapper {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    .terminal-header {
+        display: flex;
+        align-items: center;
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border-light);
+        background: #fff;
+    }
+    .terminal-dots {
+        display: flex;
+        gap: 6px;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.red { background-color: #ef4444; }
+    .dot.yellow { background-color: #f59e0b; }
+    .dot.green { background-color: #10b981; }
+    
+    .terminal-title {
+        flex: 1;
+        text-align: center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--text-secondary);
+        margin-left: -40px; 
+    }
+    
+    .terminal-body {
+        padding: 32px 24px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        line-height: 2.2;
+    }
+    .term-line {
+        display: flex;
+        align-items: center; 
+        gap: 12px;
+        opacity: 0;
+        animation: fadeUp 0.3s forwards ease-out;
+    }
+    .term-icon {
+        color: var(--green-primary);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .term-icon svg {
+        width: 16px;
+        height: 16px;
+        stroke: currentColor;
+    }
+    .term-text {
+        color: var(--text-primary);
+        flex: 1;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .term-text.final-text {
+        display: flex;
+        align-items: center;
+    }
+    .match-highlight {
+        color: var(--green-primary);
+        font-weight: 700;
+        margin-left: 4px;
+    }
+    
+    .term-line:nth-child(1) { animation-delay: 0.4s; }
+    .term-line:nth-child(2) { animation-delay: 1.6s; }
+    .term-line:nth-child(3) { animation-delay: 2.8s; }
+    .term-line:nth-child(4) { animation-delay: 4.4s; }
+    .term-line:nth-child(5) { animation-delay: 5.6s; }
+    
+    .term-divider {
+        height: 1px;
+        background-color: var(--border-light);
+        margin: 24px 0;
+        opacity: 0;
+        animation: fadeUp 0.3s forwards ease-out;
+        animation-delay: 6.8s;
+    }
+    
+    .term-line.final {
+        animation-delay: 7.2s;
+    }
+    
+    @keyframes fadeUp {
+        0% { opacity: 0; transform: translateY(8px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .cursor-blink {
+        display: inline-block;
+        width: 8px;
+        height: 15px;
+        background-color: var(--green-primary);
+        margin-left: 8px;
+        animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
 
-        .hero-header h4 {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--text-main);
-            margin: 0 0 24px 0;
-            display: inline-block;
-            background: #f1f5f9;
-            padding: 8px 24px;
-            border-radius: 30px;
-            border: 1px solid #e2e8f0;
-        }
+    /* THE GTM BOTTLENECK - SPLIT LAYOUT */
+    .bottleneck-section { 
+        padding: 140px 0; 
+        background-color: #F8FAF9; 
+    }
+    .bottleneck-grid {
+        max-width: 1440px; 
+        margin: 0 auto;
+        padding: 0 5%;
+        display: grid;
+        grid-template-columns: 4fr 6fr; 
+        gap: 80px;
+        align-items: start;
+    }
+    .bottleneck-left {
+        position: sticky;
+        top: 120px;
+    }
+    .bottleneck-eyebrow {
+        display: inline-block;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        border: 1px solid var(--border-light);
+        padding: 6px 12px;
+        background: #fff;
+        margin-bottom: 32px;
+    }
+    .bottleneck-left h2 { 
+        font-size: 3rem; 
+        margin-bottom: 24px; 
+        line-height: 1.1; 
+        letter-spacing: -0.03em; 
+    }
+    .bottleneck-left p { 
+        font-size: 1.15rem; 
+        line-height: 1.7; 
+        color: var(--text-secondary); 
+    }
+    
+    .bottleneck-right {
+        display: flex;
+        flex-direction: column;
+    }
+    .bottleneck-item { 
+        display: flex; 
+        gap: 32px; 
+        padding: 48px 0; 
+        border-top: 1px solid var(--border-light); 
+        align-items: flex-start; 
+    }
+    .bottleneck-item:last-child { 
+        border-bottom: 1px solid var(--border-light); 
+    }
+    .bottleneck-num { 
+        font-family: 'JetBrains Mono', monospace; 
+        font-size: 1rem; 
+        font-weight: 700; 
+        color: var(--green-primary); 
+        padding-top: 4px; 
+    }
+    .bottleneck-content h3 { 
+        font-size: 1.5rem; 
+        margin-bottom: 12px; 
+        color: var(--text-primary); 
+        letter-spacing: -0.01em; 
+    }
+    .bottleneck-content p { 
+        font-size: 1rem; 
+        color: var(--text-secondary); 
+        margin: 0; 
+        line-height: 1.7; 
+    }
 
-        .hero-header p {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
+    /* EXECUTION MODEL */
+    .execution-editorial { padding: 140px 0; background-color: var(--bg-main); }
+    .exec-container { max-width: 1440px; margin: 0 auto; padding: 0 5%; }
+    .exec-header-wrapper { display: flex; flex-direction: column; gap: 8px; margin-bottom: 48px; align-items: flex-start; }
+    .exec-eyebrow-container { margin-bottom: 8px; }
+    .exec-title { font-size: 3rem; letter-spacing: -0.02em; line-height: 1.1; margin: 0; color: var(--text-primary); font-weight: 800; white-space: nowrap; padding-bottom: 5px; }
+    .exec-title .highlight { color: var(--green-primary); }
+    .exec-desc { font-size: 1.15rem; color: var(--text-secondary); margin: 0; line-height: 1.6; padding-bottom: 0; }
+    
+    .exec-grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--border-light); }
+    .exec-card { padding: 56px 40px; border-right: 1px solid var(--border-light); position: relative; display: flex; flex-direction: column; background: var(--bg-main); transition: background-color 0.3s; }
+    .exec-card:last-child { border-right: none; }
+    .exec-card::before { content: ''; position: absolute; top: -1px; left: 0; width: 100%; height: 3px; background-color: var(--green-primary); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease; z-index: 2; }
+    .exec-card:hover::before { transform: scaleX(1); }
+    .exec-card:hover { background-color: var(--bg-secondary); }
+    
+    .exec-card h3 { font-size: 24px; margin-bottom: 16px; color: var(--text-primary); letter-spacing: -0.01em; }
+    .exec-card p { font-size: 16px; color: var(--text-secondary); margin: 0; line-height: 1.7; }
+
+    /* PRODUCTIZED ENGINES (COMPACT LAYOUT) */
+    .engines-section { padding: 140px 0; background-color: #F8FAF9; }
+    .engines-container { max-width: 1440px; margin: 0 auto; padding: 0 5%; }
+    
+    .engines-header-wrapper { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; margin-bottom: 64px; }
+    .engines-title { font-size: 3rem; line-height: 1.1; margin: 0; letter-spacing: -0.02em; color: var(--text-primary); white-space: nowrap; }
+    .engines-title .text-gray { color: var(--text-secondary); }
+    .engines-desc { font-size: 1.15rem; color: var(--text-secondary); line-height: 1.6; margin: 0; max-width: 100%; padding-bottom: 8px; }
+
+    .engines-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    
+    .pricing-card { background: #fff; border: 1px solid var(--border-light); border-radius: 4px; padding: 32px 24px; display: flex; flex-direction: column; position: relative; transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+    .pricing-card:not(.card-flagship):hover { box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05); border-color: #bbf7d0; }
+    .card-flagship:hover { box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05); }
+    
+    .card-top-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 24px; text-transform: uppercase; }
+    
+    .card-price { font-size: 1.75rem; font-weight: 800; color: var(--text-primary); line-height: 1.1; margin-bottom: 8px; letter-spacing: -0.02em; display: block; }
+    .card-price-subtext { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--green-primary); margin-bottom: 24px; letter-spacing: 0.05em; text-transform: uppercase; }
+    
+    .pricing-card h3 { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 24px; line-height: 1.3; letter-spacing: -0.01em; }
+    
+    .card-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; }
+    .card-text { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5; }
+    
+    .card-divider { height: 1px; background-color: var(--border-light); margin: 20px 0; }
+    
+    .blueprint-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+    .blueprint-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+    .check-icon { width: 16px; height: 16px; color: var(--green-primary); flex-shrink: 0; margin-top: 2px; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    
+    /* FLAGSHIP OVERRIDES */
+    .card-flagship { border: 2px solid var(--green-primary); }
+    .card-flagship .card-top-row .flagship-text { color: var(--green-primary); }
+    .flagship-pill { position: absolute; top: -14px; left: 32px; background: var(--green-primary); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.1em; z-index: 2; }
+
+    /* GUARANTEE BOX */
+    .engines-separator {
+        height: 1px;
+        background-color: var(--border-light);
+        margin: 80px 0;
+    }
+    .guarantee-wrapper {
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .guarantee-box {
+        border: 2px dashed #86efac;
+        border-radius: 12px;
+        padding: 56px 48px;
+        position: relative;
+        background-color: transparent;
+    }
+    .guarantee-badge {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        border: 1px solid var(--border-light);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        padding: 10px 24px;
+        border-radius: 40px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-primary);
+        text-transform: uppercase;
+        width: max-content;
+    }
+    .guarantee-row {
+        display: flex;
+        gap: 32px;
+        align-items: flex-start;
+    }
+    .guarantee-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 1px solid #86efac;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: var(--green-primary);
+    }
+    .guarantee-icon svg {
+        width: 28px;
+        height: 28px;
+        stroke: currentColor;
+        stroke-width: 2;
+        fill: none;
+    }
+    .guarantee-content h4 {
+        font-size: 24px;
+        margin-bottom: 12px;
+        color: var(--text-primary);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+    .guarantee-content p {
+        font-size: 16px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin: 0;
+    }
+    .guarantee-divider {
+        height: 1px;
+        background: #dcfce7;
+        margin: 40px 0;
+    }
+
+    /* CTA SECTION */
+    .cta-section { 
+        padding: 140px 0; 
+        background-color: var(--bg-main);
+        background-image: 
+            linear-gradient(to right, rgba(0,0,0,0.015) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0,0,0,0.015) 1px, transparent 1px);
+        background-size: 48px 48px;
+        position: relative;
+        overflow: hidden;
+    }
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        bottom: -20%;
+        right: -10%;
+        width: 60%;
+        height: 80%;
+        background: radial-gradient(circle, rgba(22, 163, 74, 0.08) 0%, rgba(255,255,255,0) 70%);
+        z-index: 0;
+    }
+    .cta-container { 
+        max-width: 1440px; 
+        margin: 0 auto; 
+        padding: 0 5%; 
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .cta-eyebrow {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--green-primary);
+        text-transform: uppercase;
+        margin-bottom: 24px;
+    }
+    .cta-headline { 
+        font-size: 4rem; 
+        line-height: 1.1; 
+        margin-bottom: 24px; 
+        color: var(--text-primary);
+        letter-spacing: -0.02em;
+        font-weight: 800;
+    }
+    .cta-desc { 
+        font-size: 1.25rem; 
+        color: var(--text-secondary); 
+        margin-bottom: 40px; 
+        max-width: 780px;
+        line-height: 1.6;
+    }
+    .cta-desc strong {
+        color: var(--text-primary);
+    }
+    .cta-action-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+    }
+    .cta-sla {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    /* RESPONSIVE DESIGN (Desktop, Mobile, Tablet, TV) */
+    @media (min-width: 2000px) {
+        /* Ultra Large Screens / TV */
+        html { font-size: 110%; }
+        .nav-container, .hero-container, .bottleneck-grid, .exec-container, .engines-container, .cta-container { max-width: 1800px; }
+    }
+
+    @media (max-width: 1200px) {
+        .hero-container, .bottleneck-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+        .hero-headline { font-size: 4rem; }
+        .exec-title, .engines-title, .cta-headline { font-size: 2.75rem; }
+    }
+
+    @media (max-width: 992px) {
+        /* Tablet adjustments */
+        section { padding: 100px 0; }
+        .hero-container, .bottleneck-grid { grid-template-columns: 1fr; gap: 48px; }
+        .hero-content, .bottleneck-left { max-width: 100%; }
+        .hero-headline { font-size: 3.5rem; }
+        .trust-logos { justify-content: center; flex-wrap: wrap; }
         
-        .meta-tags {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 36px;
-            flex-wrap: wrap;
-        }
+        /* Removing sticky behavior for smaller screens to prevent overlap */
+        .bottleneck-left { position: relative; top: auto; }
+        .bottleneck-left h2 { font-size: 2.5rem; }
+        .bottleneck-item { flex-direction: column; gap: 16px; padding: 32px 0; }
+        
+        .exec-title { font-size: 2.5rem; white-space: normal; }
+        .exec-grid { grid-template-columns: 1fr; border-right: 1px solid var(--border-light); border-bottom: none; }
+        .exec-card { border-right: none; border-bottom: 1px solid var(--border-light); padding: 40px 32px; }
+        .exec-card:last-child { border-bottom: none; }
+        
+        .engines-grid { grid-template-columns: 1fr; gap: 32px; }
+        .engines-title { font-size: 2.5rem; white-space: normal; }
+        
+        .guarantee-box { padding: 40px 24px; }
+        .guarantee-row { flex-direction: column; gap: 24px; }
+        
+        .cta-headline { font-size: 3rem; }
+        .cta-action-row { flex-direction: column; align-items: center; }
+        
+        .nav-links { display: none; }
+    }
 
-        .meta-tag {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-main);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .meta-tag svg {
-            color: var(--color-primary);
-            flex-shrink: 0;
-        }
-
-        .miro-board {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .frame {
-            border: 2px dashed;
-            border-radius: 16px;
-            padding: 50px 40px 30px 40px;
-            position: relative;
-            backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            margin-bottom: 70px;
-            width: 100%;
-        }
-
-        /* Center-aligned frame headers */
-        .frame::before {
-            content: attr(data-title);
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            padding: 10px 28px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            border-radius: 30px;
-            box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.1);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--text-main);
-            /* Ensure it wraps gracefully on very tiny mobile screens */
-            white-space: normal;
-            text-align: center;
-            width: max-content;
-            max-width: 90%;
-        }
-
-        /* Section Backgrounds */
-        .frame.menu-section { background-color: var(--menu-bg); border-color: rgba(79, 70, 229, 0.2); }
-        .frame.sequence-section { background-color: var(--sequence-bg); border-color: rgba(79, 70, 229, 0.2); }
-        .frame.guarantee-section { background-color: var(--guarantee-bg); border-color: rgba(16, 185, 129, 0.4); }
-
-        .category-header {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin: 30px 0 20px 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .category-header:first-of-type {
-            margin-top: 10px;
-        }
-
-        .category-header::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, #e2e8f0, transparent);
-        }
-
-        .card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 30px;
-            flex: 1;
-            width: 100%;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
-            border: 1px solid #f1f5f9;
-            position: relative;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.08);
-            border-color: #e2e8f0;
-        }
-
-        /* Unified Card Top Accent */
-        .card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            border-radius: 16px 16px 0 0;
-            z-index: 1;
-            background: var(--primary-grad);
-        }
-
-        .card h3 {
-            margin: 0 0 8px 0;
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--text-main);
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .card h3 svg {
-            color: var(--text-muted);
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .card .tech-stack {
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 16px;
-            display: block;
-            color: var(--color-primary); /* Unified Primary Color */
-        }
-
-        .card p.description {
-            margin: 0;
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-            flex-grow: 1;
-        }
-
-        /* Outcomes CSS */
-        .outcome-separator {
-            border: none;
-            border-top: 1px dashed #cbd5e1;
-            margin: 20px 0 16px 0;
-            width: 100%;
-        }
-
-        .outcome-text {
-            margin: 0;
-            font-size: 0.9rem;
-            color: var(--text-main);
-            line-height: 1.5;
-            font-weight: 500;
-        }
-
-        .outcome-text .label {
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-            margin-right: 6px;
-            display: inline-block;
-            color: var(--color-accent); /* Emerald strictly for outcomes */
-        }
-
-        .grid-layout {
-            display: grid; 
-            /* Fixed to exactly 3 columns per row on desktop */
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 20px;
-            width: 100%;
-        }
-
-        .pillar-header {
-            padding-bottom: 14px;
-            border-bottom: 2px solid #f1f5f9;
-            margin-bottom: 14px !important;
-        }
-
-        /* TIMELINE CSS */
-        .timeline {
-            position: relative;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0;
-        }
-
-        /* The continuous vertical line */
-        .timeline::after {
-            content: '';
-            position: absolute;
-            width: 2px;
-            background: var(--color-primary);
-            top: 24px;
-            bottom: 24px;
-            left: 32px; 
-            transform: translateX(-50%);
-            border-radius: 2px;
-            z-index: 0;
-        }
-
-        .timeline-item {
-            padding: 0 0 40px 72px;
-            position: relative;
-            width: 100%;
-        }
-
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-
-        /* The timeline dots */
-        .timeline-dot {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            left: 32px; 
-            transform: translateX(-50%);
-            top: 24px;
-            background-color: #fff;
-            border: 4px solid var(--color-primary);
-            border-radius: 50%;
-            z-index: 1;
-            box-shadow: 0 0 0 6px var(--sequence-bg);
-        }
-
-        .timeline-content {
-            background-color: white;
-            padding: 24px 32px;
-            border-radius: 16px;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);
-            transition: all 0.3s ease;
-        }
-
-        .timeline-content:hover {
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.06);
-            border-color: #e2e8f0;
-        }
-
-        .timeline-content h3 {
-            margin: 0 0 6px 0;
-            font-size: 1.2rem;
-            color: var(--text-main);
-        }
-
-        .timeline-content .tech-stack {
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--color-primary);
-            margin-bottom: 12px;
-            display: inline-block;
-        }
-
-        .timeline-content p {
-            margin: 0;
-            color: var(--text-muted);
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        /* Guarantee & Security Section CSS */
-        .guarantee-content {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        .guarantee-content svg {
-            color: var(--color-accent); /* Emerald strictly for Guarantee */
-            width: 48px;
-            height: 48px;
-            flex-shrink: 0;
-        }
-
-        .security-content {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        .security-content svg {
-            color: var(--text-muted);
-            width: 42px;
-            height: 42px;
-            flex-shrink: 0;
-        }
-
-        .cta-section {
-            text-align: center;
-            padding: 40px;
-            background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-            width: 100%;
-        }
-
-        .cta-section h3 {
-            font-size: 1.5rem;
-            margin: 0 0 16px 0;
-        }
-
-        .cta-section p {
-            color: var(--text-muted);
-            margin: 0 0 24px 0;
-        }
-
-        /* ========================================================
-           MOBILE OPTIMIZATION (Responsive Breakpoints)
-           ======================================================== */
-        @media (max-width: 1100px) {
-            .grid-layout {
-                grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets/smaller desktops */
-            }
-        }
-
-        @media (max-width: 900px) {
-            body {
-                padding: 24px 16px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 20px 12px;
-            }
-            
-            .hero-header {
-                padding: 48px 24px;
-                margin-bottom: 50px;
-            }
-
-            .hero-header h2 {
-                font-size: 2.2rem;
-            }
-
-            .hero-header h4 {
-                font-size: 1rem;
-                padding: 8px 16px;
-            }
-
-            .grid-layout {
-                grid-template-columns: 1fr; /* 1 column on mobile devices */
-            }
-
-            .frame {
-                margin-bottom: 50px;
-                padding: 48px 20px 24px 20px; 
-            }
-            
-            .frame::before {
-                font-size: 0.85rem;
-                padding: 8px 20px;
-            }
-
-            .card {
-                padding: 24px 20px; 
-            }
-
-            .category-header {
-                font-size: 1.25rem;
-            }
-
-            /* Timeline Mobile Adjustments */
-            .timeline::after {
-                left: 20px; 
-            }
-
-            .timeline-dot {
-                left: 20px; 
-                width: 20px; 
-                height: 20px;
-                top: 26px; 
-            }
-
-            .timeline-item {
-                padding-left: 50px; 
-            }
-
-            .timeline-content {
-                padding: 20px 24px;
-            }
-
-            .guarantee-content, .security-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 16px;
-            }
-
-            .cta-section {
-                padding: 32px 20px;
-            }
-
-            .cta-section h3 {
-                font-size: 1.3rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-header h2 {
-                font-size: 1.8rem;
-            }
-
-            .hero-header p {
-                font-size: 1rem;
-            }
-
-            .meta-tags {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .meta-tag {
-                width: 100%;
-                justify-content: center;
-                font-size: 0.85rem;
-                padding: 10px;
-            }
-
-            .timeline-content {
-                padding: 16px;
-            }
-
-            .timeline-content h3 {
-                font-size: 1.1rem;
-            }
-
-            .timeline-content p {
-                font-size: 0.9rem;
-            }
-
-            .guarantee-content svg, .security-content svg {
-                width: 40px;
-                height: 40px;
-            }
-        }
-    </style>
+    @media (max-width: 600px) {
+        /* Mobile adjustments */
+        section { padding: 60px 0; }
+        .hero { padding-top: 60px; padding-bottom: 40px; }
+        .hero-eyebrow { padding: 4px 12px 4px 4px; }
+        .hero-eyebrow img { width: 24px; height: 24px; }
+        .hero-eyebrow span { font-size: 0.75rem; }
+        .hero-headline { font-size: 2.5rem; }
+        .hero-desc { font-size: 1rem; margin-bottom: 32px; }
+        
+        .trust-bar { padding-top: 32px; margin-top: 32px; text-align: center; }
+        .trust-logos { gap: 24px; }
+        .trust-logos img { height: 24px; }
+        
+        .bottleneck-left h2, .exec-title, .engines-title, .cta-headline { font-size: 2rem; }
+        .bottleneck-item { flex-direction: column; gap: 16px; padding: 32px 0; }
+        
+        .btn-green, .nav-cta { width: 100%; justify-content: center; text-align: center; padding: 16px 20px; }
+        
+        .terminal-body { padding: 24px 16px; }
+        .term-line { font-size: 0.75rem; }
+        
+        .guarantee-box { padding: 48px 24px 32px; }
+        .guarantee-badge { padding: 8px 16px; font-size: 0.65rem; top: 0; transform: translate(-50%, -50%); text-align: center; white-space: nowrap;}
+        .guarantee-row { flex-direction: column; gap: 16px; align-items: center; text-align: center; }
+        .guarantee-content h4 { font-size: 1.25rem; }
+        .guarantee-content p { font-size: 0.95rem; }
+        
+        .cta-desc { font-size: 1.1rem; }
+        .cta-action-row { flex-direction: column; gap: 16px; width: 100%; }
+    }
+</style>
 </head>
 <body>
 
-    <div class="miro-board">
-
-        <div class="hero-header">
-            <h2>The 7-Day GTM Architecture Sprint</h2>
-            <h4>Engineered by: Keshav Raj &nbsp;|&nbsp; Stack Specialization: HubSpot + Clay + n8n</h4>
-            <p>When a GTM engine is scaling, full-time hiring cycles take months, but data degradation and broken handoffs happen daily. This 7-day execution sprint is a fixed-scope, zero-overhead technical intervention designed to isolate and eliminate your deepest system bottlenecks.</p>
-            
-            <div class="meta-tags">
-                <div class="meta-tag">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    Investment: $1,500 (Flat Fee)
-                </div>
-                <div class="meta-tag">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    Timeline: 7 Calendar Days
-                </div>
-                <div class="meta-tag">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    Commitment: Zero long-term retainer
-                </div>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="https://www.linkedin.com/in/keshavaraj/" class="nav-logo" target="_blank" rel="noopener noreferrer">Keshav Raj</a>
+            <div class="nav-links">
+                <a href="about.html" class="nav-link">About Me</a>
+                <a href="https://meetings-na2.hubspot.com/keshav-raj" class="nav-cta">Audit Your Infrastructure</a>
             </div>
         </div>
+    </nav>
 
-        <div class="frame menu-section" data-title="🛠️ The Menu: Select Any 3 Workflows">
-            <p style="margin-top: 0; color: var(--text-muted); margin-bottom: 10px;">Choose the three highest-priority data pipelines or automations you need deployed right now.</p>
-            
-            <h3 class="category-header">Foundation Sprints</h3>
-            <div class="grid-layout">
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-eyebrow">
+                    <img src="https://241931432.fs1.hubspotusercontent-na2.net/hubfs/241931432/Keshav.jpg" alt="Keshav Raj">
+                    <span>Keshav Raj / Revenue Architect</span>
+                </div>
+
+                <h1 class="hero-headline">
+                    GTM<br>
+                    infrastructure<br>
+                    for <span class="text-highlight">scaling SaaS.</span>
+                </h1>
                 
-                <div class="card pillar-tech">
-                    <h3 class="pillar-header">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                        1. Automated Enrichment Engine
-                    </h3>
-                    <span class="tech-stack">Clay + HubSpot</span>
-                    <p class="description">Scrapes and enriches incoming leads via cascading data sources (LinkedIn, GitHub, Apollo). Automatically maps data to custom HubSpot properties with zero manual research.</p>
-                    <hr class="outcome-separator">
-                    <p class="outcome-text"><span class="label">Outcome:</span> Reps save 5+ hours a week on manual research; and speed-to-lead drops instantly to zero.</p>
-                </div>
-
-                <div class="card pillar-enable">
-                    <h3 class="pillar-header">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-                        2. Smart Routing & Alerts
-                    </h3>
-                    <span class="tech-stack">n8n + HubSpot + Slack</span>
-                    <p class="description">Intelligently routes leads to specific reps based on territory or company size. Triggers real-time Slack notifications with contextual lead data when a high-intent account takes action.</p>
-                    <hr class="outcome-separator">
-                    <p class="outcome-text"><span class="label">Outcome:</span> Decreases lead decay; prospects are engaged within 5 minutes of high-intent actions.</p>
-                </div>
-
-                <div class="card pillar-strat">
-                    <h3 class="pillar-header">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-                        3. Lifecycle & Attribution Reset
-                    </h3>
-                    <span class="tech-stack">HubSpot Architecture</span>
-                    <p class="description">Audits, restructures, and locks down your Lifecycle Stages and Lead Status. Ensures flawless cross-functional transitions from Marketing MQL to Sales SQL.</p>
-                    <hr class="outcome-separator">
-                    <p class="outcome-text"><span class="label">Outcome:</span> Guarantees 100% accurate conversion rate tracking from Marketing to closed-won.</p>
-                </div>
-
-                <div class="card pillar-proc">
-                    <h3 class="pillar-header">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                        4. Outbound Signal Pipeline
-                    </h3>
-                    <span class="tech-stack">Clay + n8n + HubSpot</span>
-                    <p class="description">Monitors dynamic intent triggers (e.g., job openings, recent funding) and automatically pushes qualified prospects straight into HubSpot active sequences.</p>
-                    <hr class="outcome-separator">
-                    <p class="outcome-text"><span class="label">Outcome:</span> Replaces cold outreach with warm, timing-based engagement, boosting reply rates by up to 3x.</p>
-                </div>
-
-                <div class="card pillar-data">
-                    <h3 class="pillar-header">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                        5. AI Post-Call Data Sync
-                    </h3>
-                    <span class="tech-stack">n8n + OpenAI + HubSpot</span>
-                    <p class="description">Extracts raw call data from your recording platform, structures action items using AI, and instantly updates HubSpot deal notes and tasks without manual entry.</p>
-                    <hr class="outcome-separator">
-                    <p class="outcome-text"><span class="label">Outcome:</span> Eliminates administrative CRM work, giving reps 20% more time for active selling.</p>
-                </div>
-            </div>
-
-            <h3 class="category-header" style="margin-top: 40px;">Architecture Sprints</h3>
-            <div class="grid-layout">
+                <p class="hero-desc">
+                    I deploy fixed-scope technical interventions to eliminate CRM bottlenecks, automate intent-driven outbound, and drastically lower your Customer Acquisition Cost.
+                </p>
                 
-                <div class="card pillar-data">
-                    <h3 class="pillar-header">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                        6. Automated ARR & Billing Sync
-                    </h3>
-                    <span class="tech-stack">n8n + Stripe/ERP + HubSpot</span>
-                    <p class="description">Creates a bi-directional data flow uniting billing ledgers with CRM company records. Automates ARR roll-ups, proration updates, and renewal pipeline generation.</p>
-                    <hr class="outcome-separator">
-                    <p class="outcome-text"><span class="label">Outcome:</span> Prevents revenue leakage and ensures board-level reporting matches cash collected.</p>
-                </div>
-
-                <div class="card pillar-proc">
-                    <h3 class="pillar-header">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                        7. Dynamic Lead & SLA Routing
-                    </h3>
-                    <span class="tech-stack">n8n + HubSpot + Slack</span>
-                    <p class="description">Advanced round-robin logic incorporating real-time rep capacity, OOO syncing, weighted territories, and auto-reassignment if SLA follow-up breaches occur.</p>
-                    <hr class="outcome-separator">
-                    <p class="outcome-text"><span class="label">Outcome:</span>Ensures zero leads slip through the cracks, thereby maximizing net inbound marketing ROI.</p>
-                </div>
-
-                <div class="card pillar-strat">
-                    <h3 class="pillar-header">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                        8. Predictive Churn Triggers
-                    </h3>
-                    <span class="tech-stack">Clay + n8n + HubSpot</span>
-                    <p class="description">Aggregates product usage telemetry and external signals to calculate real-time customer health scores, automatically generating tasks for CS when accounts drop into high-risk tiers.</p>
-                    <hr class="outcome-separator">
-                    <p class="outcome-text"><span class="label">Outcome:</span> CS intercepts churn 30 days before renewal, measurably lifting Net Retention Rate (NRR).</p>
-                </div>
-
-                <div class="card pillar-enable">
-                    <h3 class="pillar-header">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        9. Automated Deal Desk logic
-                    </h3>
-                    <span class="tech-stack">HubSpot + n8n + Slack</span>
-                    <p class="description">Custom CPQ-lite workflows that flag high-discount or non-standard contract terms, routing them through Slack for seamless executive approval before unlocking the quote.</p>
-                    <hr class="outcome-separator">
-                    <p class="outcome-text"><span class="label">Outcome:</span> Accelerates sales cycles while protecting gross margins from unauthorized discounting.</p>
-                </div>
-
-                <div class="card pillar-tech">
-                    <h3 class="pillar-header">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-                        10. Cross-Object Hierarchy Build
-                    </h3>
-                    <span class="tech-stack">n8n + HubSpot Data Sync</span>
-                    <p class="description">Complex bi-directional normalization of parent-child company hierarchies. Rolls up deal values, activity counts, and contacts from subsidiaries to the master Enterprise account.</p>
-                    <hr class="outcome-separator">
-                    <p class="outcome-text"><span class="label">Outcome:</span> Unlocks clear visibility into Enterprise total account value and cross-sell white space.</p>
-                </div>
-
+                <a href="https://meetings-na2.hubspot.com/keshav-raj" class="btn-green">
+                    SCHEDULE INFRASTRUCTURE AUDIT <span>↗</span>
+                </a>
             </div>
-        </div>
 
-        <div class="frame sequence-section" data-title="⚡ The 7-Day Delivery Sequence">
-            <p style="margin-top: 0; color: var(--text-muted); margin-bottom: 40px; text-align: center; max-width: 700px; margin-left: auto; margin-right: auto;">We bypass standard enterprise onboarding and discovery cycles. We follow a strict execution cadence to deliver functional infrastructure in 7 days.</p>
+            <div class="hero-visual">
+                <div class="terminal-wrapper">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <div class="terminal-title">PIPELINE.RUN</div>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="term-line">
+                            <span class="term-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </span>
+                            <span class="term-text">[rb2b] deanonymized visitor • acme.io / VP Sales</span>
+                        </div>
+                        <div class="term-line">
+                            <span class="term-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                            </span>
+                            <span class="term-text">[clay] enriched firmographics → <span class="match-highlight">98% match</span></span>
+                        </div>
+                        <div class="term-line">
+                            <span class="term-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                            </span>
+                            <span class="term-text">[claude] drafted outreach based on Q3 hiring signal</span>
+                        </div>
+                        <div class="term-line">
+                            <span class="term-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                            </span>
+                            <span class="term-text">[hubspot] Lifecycle → MQL • owner → @alex</span>
+                        </div>
+                        <div class="term-line">
+                            <span class="term-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            </span>
+                            <span class="term-text">[slack] SLA countdown started • 04:57</span>
+                        </div>
+                        
+                        <div class="term-divider"></div>
+                        
+                        <div class="term-line final">
+                            <span class="term-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                            </span>
+                            <span class="term-text final-text">waiting for next signal<span class="cursor-blink"></span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trust-bar">
+                <p>Core Architecture Stack</p>
+                <div class="trust-logos">
+                    <img src="https://241931432.fs1.hubspotusercontent-na2.net/hubfs/241931432/HubSpot.svg" alt="HubSpot">
+                    <img src="https://241931432.fs1.hubspotusercontent-na2.net/hubfs/241931432/Clay.avif" alt="Clay">
+                    <img src="https://241931432.fs1.hubspotusercontent-na2.net/hubfs/241931432/n8n.svg" alt="n8n">
+                    <img src="https://241931432.fs1.hubspotusercontent-na2.net/hubfs/241931432/Apollo.webp" alt="Apollo">
+                    <img src="https://241931432.fs1.hubspotusercontent-na2.net/hubfs/241931432/Claude.svg" alt="Claude">
+                    <img src="https://241931432.fs1.hubspotusercontent-na2.net/hubfs/241931432/rb2b.svg" alt="rb2b">
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- THE GTM BOTTLENECK -->
+    <section class="bottleneck-section">
+        <div class="bottleneck-grid">
+            <div class="bottleneck-left">
+                <div class="bottleneck-eyebrow">THE GTM BOTTLENECK</div>
+                <h2>AI has permanently changed how your prospects buy software.</h2>
+                <p>Your prospects now research, validate, and build consensus in the dark before you ever capture an email.</p>
+            </div>
             
-            <div class="timeline">
+            <div class="bottleneck-right">
+                <div class="bottleneck-item">
+                    <div class="bottleneck-num">01</div>
+                    <div class="bottleneck-content">
+                        <h3>Anonymous AI Research</h3>
+                        <p>Buyers use LLMs and private communities to bypass your marketing forms entirely. They already understand your pricing architecture and product flaws before your outbound engines ever scrape their domain.</p>
+                    </div>
+                </div>
                 
-                <div class="timeline-item item-1">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <h3>Day 1: Technical Scoping & Access</h3>
-                        <span class="tech-stack">Infrastructure Setup</span>
-                        <p>Secure, restricted API access mapping via HubSpot, Clay, and n8n. Alignment call to confirm your 3 chosen menu items and precise data validation rules.</p>
+                <div class="bottleneck-item">
+                    <div class="bottleneck-num">02</div>
+                    <div class="bottleneck-content">
+                        <h3>Scattered Decision Making</h3>
+                        <p>There is no sequential next step in modern buying. Committees validate your claims concurrently using diverse autonomous agents, rendering traditional linear drip campaigns completely obsolete.</p>
                     </div>
                 </div>
-
-                <div class="timeline-item item-2">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <h3>Days 2 - 4: Core Infrastructure Build</h3>
-                        <span class="tech-stack">Asynchronous Development</span>
-                        <p>Sandbox development of your selected webhooks, n8n routing paths, and Clay waterfall logic. We build silently with zero interruption to your live production data.</p>
+                
+                <div class="bottleneck-item">
+                    <div class="bottleneck-num">03</div>
+                    <div class="bottleneck-content">
+                        <h3>The Data Reality Gap</h3>
+                        <p>Revenue teams cling to static CRM stages like MQL or SQL. Your infrastructure must adapt to capture dynamic, unstructured intent signals instead of forcefully mapping buyers into rigid pipelines.</p>
                     </div>
                 </div>
-
-                <div class="timeline-item item-3">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <h3>Day 5: Production QA & Stress Testing</h3>
-                        <span class="tech-stack">Data Integrity Verification</span>
-                        <p>Rigorous edge-case testing to ensure zero data loops, strict formatting compliance, and flawless multi-source attribution inside HubSpot's architecture.</p>
-                    </div>
-                </div>
-
-                <div class="timeline-item item-4">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <h3>Days 6 - 7: Complete Deployment & Handoff</h3>
-                        <span class="tech-stack">Live Execution</span>
-                        <p>Pushing pipelines live to production. Delivery of a custom Loom documentation video detailing the exact data flow for your internal team's long-term ownership.</p>
-                    </div>
-                </div>
-
             </div>
         </div>
+    </section>
 
-        <div class="frame guarantee-section" data-title="🔒 Guarantee & Security">
-            <div class="guarantee-content" style="margin-bottom: 32px;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                <div>
-                    <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; color: var(--text-main);">Zero-Risk Execution Guarantee</h3>
-                    <p style="margin: 0; color: var(--text-muted); line-height: 1.6; font-size: 1.05rem;">We begin technical configuration on Day 1. If by Day 3 (48 hours into the build) you do not see the exact infrastructural clarity and velocity promised, we kill the project immediately. <strong>You pay absolutely nothing, zero strings attached.</strong></p>
+    <!-- EXECUTION MODEL -->
+    <section class="execution-editorial">
+        <div class="exec-container">
+            <div class="exec-header-wrapper">
+                <div class="exec-eyebrow-container">
+                    <div class="bottleneck-eyebrow">EXECUTION MODEL</div>
                 </div>
+                <h2 class="exec-title">The <span class="highlight">Anti-Agency</span> Standard.</h2>
+                <p class="exec-desc">Traditional agencies sell billable hours and endless discovery calls.<br>I sell functional architecture deployed in strict execution sprints.</p>
             </div>
             
-            <hr style="border:0; border-top: 1px solid rgba(16, 185, 129, 0.2); margin: 0 0 32px 0; width: 100%;">
-            
-            <div class="security-content">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <div>
-                    <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; color: var(--text-main);">Enterprise-Grade Security & Compliance</h3>
-                    <p style="margin: 0; color: var(--text-muted); line-height: 1.6; font-size: 1.05rem;">We operate exclusively via restricted OAuth API scopes, build all routing logic in sandbox environments first, and maintain a strict <strong>zero-data-retention policy</strong>. Your proprietary data and PII never leave your tech stack.</p>
+            <div class="exec-grid">
+                <div class="exec-card">
+                    <h3>Zero Retainer Bloat</h3>
+                    <p>No 12-month lock-ins. No ambiguous "strategy" fees. You pay strictly for deployed pipelines and tangible infrastructure.</p>
+                </div>
+                <div class="exec-card">
+                    <h3>Zero Internal Drag</h3>
+                    <p>I do not drain your engineering resources. I build, test, and deploy using isolated API scopes and sandbox environments.</p>
+                </div>
+                <div class="exec-card">
+                    <h3>Measurable Impact</h3>
+                    <p>Every sprint is tied to a specific, measurable revenue outcome: from slashing speed-to-lead to stopping active CRM pipeline decay.</p>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="cta-section">
-            <h3>Ready to unblock your GTM stack next week?</h3>
-            <p>Reply to our conversation with the <strong>numbers of the 3 workflows</strong> you want built from the menu above, and I will send over a secure 1-page digital agreement to lock in your sprint slot.</p>
+    <!-- PRODUCTIZED ENGINES -->
+    <section id="engines" class="engines-section">
+        <div class="engines-container">
+            <div class="engines-header-wrapper">
+                <div class="bottleneck-eyebrow" style="margin-bottom: 24px;">PRODUCTIZED ENGINES</div>
+                <h2 class="engines-title">Fixed scope. Fixed price. <span class="text-gray">Fixed timeline.</span></h2>
+                <p class="engines-desc">Select the exact infrastructural intervention your revenue team needs to unblock pipeline today.</p>
+            </div>
+
+            <div class="engines-grid">
+                
+                <!-- CARD 1 -->
+                <div class="pricing-card">
+                    <div class="card-top-row">
+                        <span>ENGINE_01</span>
+                        <span>14 DAYS</span>
+                    </div>
+                    
+                    <div class="card-price">BETA COHORT</div>
+                    <div class="card-price-subtext">COST: VERIFIED CASE STUDY</div>
+                    <h3>The Pipeline Generation Engine</h3>
+                    
+                    <div class="card-label">FOCUS</div>
+                    <p class="card-text">Automated intent capture, waterfall enrichment, and AI-driven outbound flow.</p>
+                    
+                    <div class="card-divider"></div>
+                    
+                    <div class="card-label">OUTCOME</div>
+                    <p class="card-text">Architected to capture, validate, and sequence up to two thousand net-new accounts without human intervention.</p>
+                    
+                    <div class="card-divider"></div>
+                    
+                    <div class="card-label">BLUEPRINT</div>
+                    <ul class="blueprint-list">
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Intent Capture:</strong> rb2b deanonymizes high-intent website visitors.</span>
+                        </li>
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Enrichment Waterfall:</strong> Clay scrapes LinkedIn and Apollo to validate contact data and firmographics.</span>
+                        </li>
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>AI Reasoning:</strong> Claude analyzes recent company news to generate hyper-personalized copy.</span>
+                        </li>
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Execution:</strong> Enriched profile and drafted email are pushed natively into HubSpot and Apollo.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- CARD 2 -->
+                <div class="pricing-card">
+                    <div class="card-top-row">
+                        <span>ENGINE_02</span>
+                        <span>14 DAYS</span>
+                    </div>
+                    
+                    <div class="card-price">BETA COHORT</div>
+                    <div class="card-price-subtext">COST: VERIFIED CASE STUDY</div>
+                    <h3>The Revenue Velocity Architecture</h3>
+                    
+                    <div class="card-label">FOCUS</div>
+                    <p class="card-text">Instant lead routing, strict SLA enforcement, and rapid CRM data sync operations.</p>
+                    
+                    <div class="card-divider"></div>
+                    
+                    <div class="card-label">OUTCOME</div>
+                    <p class="card-text">Drastically drop speed-to-lead to under five minutes and absolutely automate CRM data entry for active records.</p>
+                    
+                    <div class="card-divider"></div>
+                    
+                    <div class="card-label">BLUEPRINT</div>
+                    <ul class="blueprint-list">
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Trigger:</strong> HubSpot webhooks catch new high-score MQLs instantly.</span>
+                        </li>
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Logic Engine:</strong> n8n evaluates territory rules, rep capacity, and OOO status.</span>
+                        </li>
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Distribution:</strong> n8n assigns the record in HubSpot and pushes a context-rich Slack alert.</span>
+                        </li>
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Enforcement:</strong> 5-minute SLA countdown, automated escalation on breach.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- CARD 3 (FLAGSHIP) -->
+                <div class="pricing-card card-flagship">
+                    <div class="flagship-pill">FLAGSHIP</div>
+                    <div class="card-top-row">
+                        <span class="flagship-text">FLAGSHIP</span>
+                        <span>30 DAYS</span>
+                    </div>
+                    
+                    <div class="card-price">BETA COHORT</div>
+                    <div class="card-price-subtext">COST: VERIFIED CASE STUDY</div>
+                    <h3>The GTM Infrastructure Master Build</h3>
+                    
+                    <div class="card-label">FOCUS</div>
+                    <p class="card-text">Complete ecosystem alignment across Marketing, direct Sales, and CS platforms.</p>
+                    
+                    <div class="card-divider"></div>
+                    
+                    <div class="card-label">OUTCOME</div>
+                    <p class="card-text">Complete lockdown of Lifecycle Stages, exact Parent-Child company hierarchies, and full cross-platform syncing.</p>
+                    
+                    <div class="card-divider"></div>
+                    
+                    <div class="card-label">BLUEPRINT</div>
+                    <ul class="blueprint-list">
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Data Schema:</strong> Complete restructuring of HubSpot Custom Objects and Parent-Child hierarchies.</span>
+                        </li>
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Automation:</strong> Deployment of n8n routing logic and Clay enrichment waterfalls.</span>
+                        </li>
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Attribution:</strong> Locking down Lifecycle Stages for absolute data integrity, source to closed-won.</span>
+                        </li>
+                        <li>
+                            <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Handoff:</strong> Full documentation, runbooks, and 30-day operator support.</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- GUARANTEE BOX -->
+            <div class="engines-separator"></div>
+            
+            <div class="guarantee-wrapper">
+                <div class="guarantee-box">
+                    <div class="guarantee-badge">
+                        <span>🔒</span> GUARANTEE & SECURITY
+                    </div>
+                    
+                    <div class="guarantee-row">
+                        <div class="guarantee-icon">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </div>
+                        <div class="guarantee-content">
+                            <h4>Zero-Risk Execution Guarantee</h4>
+                            <p>We begin technical configuration on Day 1. If by Day 3 (48 hours into the build) you do not see the exact infrastructural clarity and velocity promised, we kill the project immediately. <strong>You pay absolutely nothing, zero strings attached.</strong></p>
+                        </div>
+                    </div>
+                    
+                    <div class="guarantee-divider"></div>
+                    
+                    <div class="guarantee-row">
+                        <div class="guarantee-icon">
+                            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+                        <div class="guarantee-content">
+                            <h4>Enterprise-Grade Security & Compliance</h4>
+                            <p>We operate exclusively via restricted OAuth API scopes, build all routing logic in sandbox environments first, and maintain a strict <strong>zero-data-retention policy</strong>. Your proprietary data and PII never leave your tech stack.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
+    </section>
 
-    </div>
+    <!-- CTA SECTION -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <div class="cta-eyebrow">/ NEXT-STEP</div>
+            <h2 class="cta-headline">Stop guessing your pipeline metrics.</h2>
+            <p class="cta-desc">Let's map your exact revenue leaks on a live call. If I cannot show you exactly how to automate the fix, <strong>you pay nothing.</strong></p>
+            
+            <div class="cta-action-row">
+                <a href="https://meetings-na2.hubspot.com/keshav-raj" class="btn-green" style="padding: 18px 24px;">SCHEDULE AN INFRASTRUCTURE AUDIT <span>↗</span></a>
+                <span class="cta-sla">RESPONSE SLA • < 24H</span>
+            </div>
+        </div>
+    </section>
 
 </body>
 </html>
